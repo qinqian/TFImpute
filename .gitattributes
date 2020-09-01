@@ -1,0 +1,2 @@
+test/all.bed.tar.gz filter=lfs diff=lfs merge=lfs -text
+test/example.fa filter=lfs diff=lfs merge=lfs -text
