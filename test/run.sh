@@ -22,22 +22,22 @@ TFImputeMain=../TFImpute.py
 # Generate TFImpute input data from bed
 genData(){
     # Download data from XXX
-    wget http://compbio.tongji.edu.cn/~fengjx/TFImpute/all.bed.tar.gz 
-    tar xvzf all.bed.tar.gz
+    #wget http://compbio.tongji.edu.cn/~fengjx/TFImpute/all.bed.tar.gz 
+    #tar xvzf all.bed.tar.gz
 
     # Extract DNA sequence. This step requires installation of fastFromBed and hg19.fa
     mkfifo temp.fa
     for outPrefix in TestSet2 Valid TestSet1 Train Valid2 TestSet3; do
-        fastaFromBed -fi hg19.fa -bed ${outPrefix}.bed -fo temp.fa -tab -name &
-        cat temp.fa | sed 's/|/\t/g' > ${outPrefix}.fa
+        fastaFromBed -fi hg19.fa -bed ${outPrefix}.bed -tab -nameOnly | \
+        sed 's/|/\t/g' > ${outPrefix}.fa
     done
     rm temp.fa
 }
 
 trainModel(){
-    THEANO_FLAGS='device=gpu,exception_verbosity=high,floatX=float32' \
+    THEANO_FLAGS='device=cuda,exception_verbosity=high,floatX=float32' \
     python $TFImputeMain -train Train.fa -valid Valid.fa -valid2 Valid2.fa -m 32 -embed 172:50,0:0,91:50 \
-        -seqLen 300 -mml 20 -nm 2000,106,2000 -cnn TFImputeModel -e 10 -M Train.TFImputeModel.model -l 1 -F 500000 -d 0.03 2>Train.TFImputeModel.log
+        -seqLen 300 -mml 20 -nm 2000,106,2000 -cnn TFImputeModel -e 10 -M Train.TFImputeModel.model -l 1 -F 500000 -d 0.03 # 2>Train.TFImputeModel.log
 }
 
 testModel(){

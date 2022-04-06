@@ -9,7 +9,8 @@ import logging
 import time
 import os
 import datetime
-import cPickle as pickle
+#import cPickle as pickle
+import pickle
 from collections import OrderedDict
 from theano.ifelse import ifelse
 import sys
@@ -20,7 +21,7 @@ from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 #faster random generator
 import optimization
 import util
-from theano.tensor.nnet import conv
+from theano.tensor.nnet import conv2d
 #from theano.compile.nanguardmode import NanGuardMode
 try: # <= 0.8.2
     from theano.tensor.signal.downsample import max_pool_2d
@@ -60,7 +61,7 @@ class DeepBind():
         l_r = T.scalar('l_r')
         mom = T.scalar('mom')  
 
-        predict = conv.conv2d(dnaseq, motif_filter)
+        predict = conv2d(dnaseq, motif_filter)
         predict = T.transpose(predict, (0,2,1,3))
         predict = predict.reshape((predict.shape[0], predict.shape[1], predict.shape[2]))
         predict = T.maximum(0, predict - rec_bias)
@@ -127,7 +128,7 @@ class TFImputeModel():
         hidden_size = num_motif[2]
         max_window = num_motif[1]
         num_motif = num_motif[0]
-        window_cnt = seq_len / max_window
+        window_cnt = seq_len // max_window
   
         full_product_count = 1
         embed_len = 0
@@ -177,7 +178,7 @@ class TFImputeModel():
         l_r = T.scalar('l_r')
         mom = T.scalar('mom')  
 
-        predict = conv.conv2d(dnaseq, motif_filter)
+        predict = conv2d(dnaseq, motif_filter)
         rec_bias = rec_bias.reshape((1, num_motif, 1, 1))
         predict = T.maximum(0, predict - rec_bias)
 
@@ -218,7 +219,7 @@ class TFImputeModel():
         bat_pred = seqfeature.reshape((-1, num_motif))
         bat_pred = T.tile(bat_pred, (tfcell_comb_cnt, 1))
         bat_pred = bat_pred * precompute_gate  # shape: [tfcell_comb_cnt * batch_size * window_cnt, num_motif]
-        bat_pred = bat_pred.reshape((tfcell_comb_cnt, seqfeature.shape[0] / 2, 2, -1))
+        bat_pred = bat_pred.reshape((tfcell_comb_cnt, seqfeature.shape[0] // 2, 2, -1))
         bat_pred = T.dot(bat_pred, W_h) + b_h
         bat_pred = T.max(bat_pred, axis=3)
         bat_pred = T.nnet.sigmoid(bat_pred)
@@ -342,11 +343,11 @@ class TFImputeModel():
     def print_human(self):
         mf = self.parameters[0][0].eval()
         for i in range(len(mf)):
-            print "Motif ", i
+            print("Motif ", i)
             for j in range(len(mf[i])):
                 for k in range(len(mf[i,j])):
-                    print '%10.6f' % mf[i,j,k,0],
-                print ""
+                    print('%10.6f' % mf[i,j,k,0],)
+                print("")
 
 
 class TFImputeModelRNN(TFImputeModel):
@@ -396,7 +397,7 @@ class TFImputeModelRNN(TFImputeModel):
         l_r = T.scalar('l_r')
         mom = T.scalar('mom')  
 
-        predict = conv.conv2d(dnaseq, motif_filter)
+        predict = conv2d(dnaseq, motif_filter)
         predict = max_pool_2d(predict, (window_size, 1), ignore_border = True)
         predict = T.transpose(predict, (2,0,1,3))
 
@@ -505,7 +506,7 @@ class TFImputeModelRNNMask(TFImputeModel):
         l_r = T.scalar('l_r')
         mom = T.scalar('mom')  
 
-        predict = conv.conv2d(dnaseq, motif_filter)
+        predict = conv2d(dnaseq, motif_filter)
 
         predict = max_pool_2d(predict, (window_size, 1), ignore_border = True)
         predict = T.transpose(predict, (2,0,1,3))

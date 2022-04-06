@@ -9,7 +9,8 @@ import logging
 import time
 import os
 import datetime
-import cPickle as pickle
+#import cPickle as pickle
+import pickle
 from collections import OrderedDict
 from theano.ifelse import ifelse
 import sys
@@ -88,14 +89,14 @@ class Model:
     def seq2nparray(self, dnasequence, seq_len):
         if (model_config.train != None and model_config.min_len > 0):
             rand_len = random.randint(model_config.min_len, seq_len)
-            border = (len(dnasequence) - rand_len) / 2
+            border = (len(dnasequence) - rand_len) // 2
             if (border > 0):
                 dnasequence = dnasequence[border: border + rand_len]
         if (len(dnasequence) > seq_len):
-            border = (len(dnasequence) - seq_len) / 2
+            border = (len(dnasequence) - seq_len) // 2
             dnasequence = dnasequence[border: border + seq_len]
         elif (len(dnasequence) < seq_len):
-            border1 = (seq_len - len(dnasequence)) / 2
+            border1 = (seq_len - len(dnasequence)) // 2
             border2 = seq_len - len(dnasequence) - border1
             dnasequence = 'N' * border1 + dnasequence + 'N' * border2
 
@@ -170,7 +171,8 @@ class Model:
         eof = False
         while True:
             try:
-                line = openf.next()
+                #line = openf.next()
+                line = next(openf)
             except StopIteration:
                 eof = True
 
@@ -199,7 +201,7 @@ class Model:
                 seq = np.transpose(seq, (2,1,0))
                 seq = np.reshape(seq, seq.shape + (1,))
                 target = np.array(buffer_target, dtype=theano.config.floatX)
-                weight = np.array([1] * (len(buffer) / 2), dtype=theano.config.floatX)
+                weight = np.array([1] * (len(buffer) // 2), dtype=theano.config.floatX)
                 buffer = []
                 buffer_target = []
                 yield idxes, seq, target, weight
@@ -291,11 +293,13 @@ class Model:
                 if (loss_window):
                     last_loss_window = loss_window[2]
 
-                print '\rXXXXXXXXXXXXXXXXXXXXXXX INFO epoch: %s mini-batch: %s avg loss: %f, last1000 lost: %f, curr loss: %f, lr: %.6f ' % (
-                    str(epoch).ljust(5), str(total_cnt).ljust(15), sum_loss / total_cnt, last_loss_window, train_loss, model_config.learning_rate),
+                print('\rXXXXXXXXXXXXXXXXXXXXXXX INFO epoch: %s mini-batch: %s avg loss: %f, last1000 lost: %f, curr loss: %f, lr: %.6f ' % (
+                    str(epoch).ljust(5), str(total_cnt).ljust(15), sum_loss
+                    / total_cnt, last_loss_window, train_loss,
+                    model_config.learning_rate),)
                 sys.stdout.flush()
                 if (total_cnt % module_size == 0):
-                    print "\r",
+                    print("\r",)
                     sys.stdout.flush()
                     module_size *= 2
                     logger.info('epoch: %s mini-batch: %s avg loss: %f, last1000 lost: %f, curr loss: %f, lr: %.6f ' % 
@@ -303,7 +307,7 @@ class Model:
                 if (total_cnt % model_save_frequency == 0):
                     model_config.learning_rate *= 1-model_config.learning_rate_decay
                     if (model_config.model != None):
-                        print "\r",
+                        print("\r",)
                         sys.stdout.flush()
                         mf = model_config.model + "." + str(total_cnt / model_save_frequency)
                         logger.info("Save model to %s ..." % mf)

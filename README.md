@@ -8,7 +8,38 @@ combinations not in the training set but either TF or cell type is in the traini
 
 -------------
 
-## Installation
+## Latest Installation
+
+```
+1. download the genome 
+wget -c https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz
+gunzip hg19.fa.gz
+
+2. install dependency
+mamba create -n tfimpute -c bioconda theano pygpu mkl-service scikit-learn bedtools
+conda activate tfimpute
+
+3. set the ~/.theanorc
+[global]
+floatX = float32
+device = gpu
+
+[gpuarray]
+preallocate = 0.2
+
+[dnn]
+enabled=False
+
+4. Run on test datasets
+cd test
+bash run.sh
+```
+
+-------------
+
+## Previous Installation
+
+This old installation is obsoleted because Theano and bedtools has been updated significantly as time went by.
 
 To use TFImpute, Theano (version 0.7~0.9, python2.7) has to be installed. 
 
