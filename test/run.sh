@@ -41,23 +41,23 @@ trainModel(){
 }
 
 testModel(){
-    #For TestSet1 and TestSet2, use Train.TFImputeModel.model.23
-    model=Train.TFImputeModel.model.23.0
-    for each in TestSet2 TestSet1 TestSet1.shufTF TestSet2.shufTF TestSet1.shufTissue TestSet2.shufTissue; do
-        echo ${each}.prediction
-        FA=${each}.fa
-        THEANO_FLAGS='device=cuda1,exception_verbosity=high,floatX=float32' \
-            python $TFImputeMain -test $FA -m 32 -cnn TFImputeModel -M $model -p ${each}.prediction 2>>Test.${model}.log
-    done
+    ##For TestSet1 and TestSet2, use Train.TFImputeModel.model.23
+    #model=Train.TFImputeModel.model.23.0
+    #for each in TestSet2 TestSet1 TestSet1.shufTF TestSet2.shufTF TestSet1.shufTissue TestSet2.shufTissue; do
+    #    echo ${each}.prediction
+    #    FA=${each}.fa
+    #    THEANO_FLAGS='device=cuda1,exception_verbosity=high,floatX=float32' \
+    #        python $TFImputeMain -test $FA -m 32 -cnn TFImputeModel -M $model -p ${each}.prediction 2>>Test.${model}.log
+    #done
 
-    # For TestSet3 use Train.TFImputeModel.model.9
+    ## For TestSet3 use Train.TFImputeModel.model.9
     model=Train.TFImputeModel.model.10.0
-    for each in TestSet3 TestSet3.shufTF TestSet3.shufTissue; do
-        echo ${each}.prediction
-        FA=${each}.fa
-        THEANO_FLAGS='device=cuda1,exception_verbosity=high,floatX=float32' \
-            python $TFImputeMain -test $FA -m 32 -cnn TFImputeModel -M $model -p ${each}.prediction 2>>Test.${model}.log
-    done
+    #for each in TestSet3 TestSet3.shufTF TestSet3.shufTissue; do
+    #    echo ${each}.prediction
+    #    FA=${each}.fa
+    #    THEANO_FLAGS='device=cuda1,exception_verbosity=high,floatX=float32' \
+    #        python $TFImputeMain -test $FA -m 32 -cnn TFImputeModel -M $model -p ${each}.prediction 2>>Test.${model}.log
+    #done
 
     # Get embedding
     THEANO_FLAGS='device=cuda1,exception_verbosity=high,floatX=float32' \

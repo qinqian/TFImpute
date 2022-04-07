@@ -11,8 +11,6 @@ logger = logging
 
 def createRandomShare(size, name, low=None, high=None, mean=0, std=0.01, const=None):
     if low != None and high != None:
-        print(size, low, high)
-        #(6377.358490566037, 2000) -0.01 0.01
         dummy = np.asarray(np.random.uniform(size=size, low=low, high=high), dtype=theano.config.floatX)
     elif const != None:
         dummy = np.empty(size)

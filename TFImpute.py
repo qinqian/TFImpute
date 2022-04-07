@@ -428,12 +428,16 @@ class Model:
         cnt = 0
         for i in range(len(model_config.embed)):
             if (model_config.embed[i][0] == 0): continue
-            pairs = self.token2idx[i].items() 
-            pairs.sort(key=lambda x: x[1])
+            pairs = self.token2idx[i].items()
+            pairs = sorted(pairs, key=lambda x: x[1])
             for key,idx in pairs:
                 sys.stdout.write("Embed_%d\t%s" % (i, key))
                 for j in range(len(embedding[cnt][idx])):
-                    sys.stdout.write("\t%.6f" % embedding[cnt][idx][j])
+                    #print(cnt)
+                    #print(idx)
+                    #print('test-----')
+                    #print(embedding[cnt][idx][j])
+                    sys.stdout.write("\t%s" % str(embedding[cnt][idx][j]))
                 sys.stdout.write("\n")
             cnt += 1
 
