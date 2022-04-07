@@ -37,30 +37,30 @@ genData(){
 trainModel(){
     THEANO_FLAGS='device=cuda,exception_verbosity=high,floatX=float32' \
     python $TFImputeMain -train Train.fa -valid Valid.fa -valid2 Valid2.fa -m 32 -embed 172:50,0:0,91:50 \
-        -seqLen 300 -mml 20 -nm 2000,106,2000 -cnn TFImputeModel -e 10 -M Train.TFImputeModel.model -l 1 -F 500000 -d 0.03 # 2>Train.TFImputeModel.log
+        -seqLen 300 -mml 20 -nm 2000,106,2000 -cnn TFImputeModel -e 10 -M Train.TFImputeModel.model -l 1 -F 500000 -d 0.03 2>Train.TFImputeModel.log
 }
 
 testModel(){
     #For TestSet1 and TestSet2, use Train.TFImputeModel.model.23
-    model=Train.TFImputeModel.model.23
+    model=Train.TFImputeModel.model.23.0
     for each in TestSet2 TestSet1 TestSet1.shufTF TestSet2.shufTF TestSet1.shufTissue TestSet2.shufTissue; do
         echo ${each}.prediction
         FA=${each}.fa
-        THEANO_FLAGS='device=gpu,exception_verbosity=high,floatX=float32' \
+        THEANO_FLAGS='device=cuda1,exception_verbosity=high,floatX=float32' \
             python $TFImputeMain -test $FA -m 32 -cnn TFImputeModel -M $model -p ${each}.prediction 2>>Test.${model}.log
     done
 
     # For TestSet3 use Train.TFImputeModel.model.9
-    model=Train.TFImputeModel.model.10
+    model=Train.TFImputeModel.model.10.0
     for each in TestSet3 TestSet3.shufTF TestSet3.shufTissue; do
         echo ${each}.prediction
         FA=${each}.fa
-        THEANO_FLAGS='device=gpu,exception_verbosity=high,floatX=float32' \
+        THEANO_FLAGS='device=cuda1,exception_verbosity=high,floatX=float32' \
             python $TFImputeMain -test $FA -m 32 -cnn TFImputeModel -M $model -p ${each}.prediction 2>>Test.${model}.log
     done
 
     # Get embedding
-    THEANO_FLAGS='device=gpu,exception_verbosity=high,floatX=float32' \
+    THEANO_FLAGS='device=cuda1,exception_verbosity=high,floatX=float32' \
     python $TFImputeMain -ph -cnn TFImputeModel -e 10 -M $model> $model.human
 
     cd ../
@@ -68,5 +68,5 @@ testModel(){
 
 # Uncommment the following lines to execute each step
 #genData
-trainModel
-#testModel
+#trainModel
+testModel

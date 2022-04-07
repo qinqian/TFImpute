@@ -12,6 +12,8 @@ combinations not in the training set but either TF or cell type is in the traini
 
 ```
 1. download the genome 
+git clone https://github.com/qinqian/TFImpute/
+cd test
 wget -c https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz
 gunzip hg19.fa.gz
 
@@ -31,7 +33,6 @@ preallocate = 0.2
 enabled=False
 
 4. Run on test datasets
-cd test
 bash run.sh
 ```
 
